@@ -1,0 +1,16 @@
+sudo: required
+dist: trusty
+language: node_js
+node_js:
+  - '7'
+install:
+  - npm install -g truffle
+  - npm install -g ethereumjs-testrpc
+  - npm install
+before_script:
+  - testrpc > /dev/null &
+  - sleep 5
+script:
+  - truffle test
+after_script:
+  - ./node_modules/.bin/solidity-coverage && cat coverage/lcov.info | coveralls
