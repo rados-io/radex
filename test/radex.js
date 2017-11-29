@@ -52,7 +52,8 @@ contract("AnotherToken", function(accounts) {
 
 contract("Radex", function(accounts) {
   function assertJump(error) {
-    assert.isAbove(error.message.search('invalid opcode'), -1, 'Invalid opcode error must be returned');
+    let revertOrInvalid = error.message.search('invalid opcode|revert')
+    assert.isAbove(revertOrInvalid, -1, 'Invalid opcode error must be returned');
   }
 
   it("Can receive and redeem Saturn tokens", async () => {

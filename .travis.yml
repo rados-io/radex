@@ -1,16 +1,18 @@
 sudo: required
 dist: trusty
 language: node_js
+env:
+  - NODE_ENV=production
 node_js:
-  - '7'
+  - '8.6.0'
 install:
-  - npm install -g truffle
-  - npm install -g ethereumjs-testrpc
+  - npm install -g truffle@3.4.7
+  - npm install -g ethereumjs-testrpc@6.0.3
   - npm install
 before_script:
   - testrpc > /dev/null &
-  - sleep 5
+  - sleep 10
 script:
   - truffle test
 after_script:
-  - ./node_modules/.bin/solidity-coverage && cat coverage/lcov.info | coveralls
+  - node_modules/.bin/solidity-coverage

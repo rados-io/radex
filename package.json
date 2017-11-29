@@ -52,7 +52,8 @@
   },
   "dependencies": {
     "dotenv": "^2.0.0",
-    "fractional": "^1.0.0"
+    "fractional": "^1.0.0",
+    "solidity-coverage": "^0.2.2"
   },
   "scripts": {
     "test": "node scripts/test.js --env=jsdom"
