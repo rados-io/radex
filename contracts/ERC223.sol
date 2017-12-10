@@ -104,8 +104,8 @@ contract ERC223Token is ERC223 {
     if (balanceOf(msg.sender) < _value) revert();
     balances[msg.sender] = balanceOf(msg.sender).sub(_value);
     balances[_to] = balanceOf(_to).add(_value);
-    ContractReceiver reciever = ContractReceiver(_to);
-    reciever.tokenFallback(msg.sender, _value, _data);
+    ContractReceiver receiver = ContractReceiver(_to);
+    receiver.tokenFallback(msg.sender, _value, _data);
     Transfer(msg.sender, _to, _value);
     ERC223Transfer(msg.sender, _to, _value, _data);
     return true;
