@@ -1,6 +1,9 @@
 var Saturn = artifacts.require("./Saturn.sol");
 var AnotherToken = artifacts.require("./AnotherToken.sol");
 var Radex  = artifacts.require("./Radex.sol");
+var ERC20Demo = artifacts.require("./ERC20Demo.sol");
+var ERC223Upgrade = artifacts.require("./ERC223Upgrade.sol");
+
 
 var Fraction = require('fractional').Fraction
 
@@ -665,5 +668,36 @@ contract("Radex", function(accounts) {
     }
 
     await radex.redeem(stn.address, 1234);
+  });
+
+  it("Can deposit and withdraw ERC20 tokens", async () => {
+    const erc20  = await ERC20Demo.deployed();
+    const erc223 = await ERC223Upgrade.deployed();
+    const radex  = await Radex.deployed();
+
+    await radex.register(erc20.address, erc223.address);
+    let supply = await erc20.totalSupply();
+    await erc20.approve(erc223.address, supply.toString());
+
+    await erc223.transfer(radex.address, 1234);
+    let erc20balance = await erc20.balanceOf(radex.address);
+    let radexdeposit = await radex.balanceOf(erc223.address, accounts[0]);
+
+    assert.equal(erc20balance.toString(), radexdeposit.toString(), "Should have deposited erc20 tokens");
+
+    await radex.redeem(erc223.address, 1234);
+  });
+
+  it("Only admin can add an ERC20<>ERC223 upgrade", async () => {
+    const erc20  = await ERC20Demo.deployed();
+    const erc223 = await ERC223Upgrade.deployed();
+    const radex  = await Radex.deployed();
+
+    try {
+      await radex.register(erc20.address, erc223.address, {from: accounts[1]});
+      assert.fail('Cannot register ERC20 unless you are an admin');
+    } catch(error) {
+      assertJump(error);
+    }
   });
 });

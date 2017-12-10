@@ -1,26 +1,9 @@
 pragma solidity ^0.4.11;
 
 import "./SafeMath.sol";
+import "./ERC20.sol";
+import "./ERC223.sol";
 
-
-contract ERC223 {
-  uint public totalSupply;
-  function balanceOf(address who) constant returns (uint);
-
-  function name() constant returns (string _name);
-  function symbol() constant returns (string _symbol);
-  function decimals() constant returns (uint8 _decimals);
-  function totalSupply() constant returns (uint256 _supply);
-
-  function transfer(address to, uint value) returns (bool ok);
-  function transfer(address to, uint value, bytes data) returns (bool ok);
-  event Transfer(address indexed _from, address indexed _to, uint256 _value);
-  event ERC223Transfer(address indexed _from, address indexed _to, uint256 _value, bytes _data);
-}
-
-contract ContractReceiver {
-  function tokenFallback(address _from, uint _value, bytes _data);
-}
 
 contract Radex is ContractReceiver {
   using SafeMath for uint256;
@@ -36,8 +19,9 @@ contract Radex is ContractReceiver {
 
   // fee to be paid towards market makers
   // fee amount = trade amount divided by feeMultiplier
-  uint256 public feeMultiplier;
-  address etherAddress = 0x0;
+  uint256 public  feeMultiplier;
+  address private admin;
+  address private etherAddress = 0x0;
 
   // person => token => balance
   mapping(address => mapping(address => uint256)) public balances;
@@ -58,6 +42,7 @@ contract Radex is ContractReceiver {
 
   function Radex() {
     feeMultiplier = 1000;
+    admin = msg.sender;
   }
 
   function createOrder(address sellToken, address buyToken, uint256 amount, uint256 priceMul, uint256 priceDiv) returns(uint256 orderId) {
@@ -149,5 +134,13 @@ contract Radex is ContractReceiver {
     // ETH deposit handler
     balances[msg.sender][etherAddress] = balances[msg.sender][etherAddress].add(msg.value);
     Deposit(etherAddress, msg.sender, msg.value, now);
+  }
+
+  // register the ERC20<>ERC223 pair with the smart contract
+  function register(address erc20token, address erc223token) {
+    if (msg.sender != admin) { revert(); } // only owner
+    ERC20 erc20 = ERC20(erc20token);
+    uint256 supply = erc20.totalSupply();
+    erc20.approve(erc223token, supply);
   }
 }
