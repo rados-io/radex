@@ -1,7 +1,7 @@
 # Radex - decentralized exchange for Ethereum ERC223 tokens
 [![Build Status](https://travis-ci.org/rados-io/radex.svg?branch=master)](https://travis-ci.org/rados-io/radex)[![Coverage Status](https://coveralls.io/repos/github/rados-io/radex/badge.svg?branch=master)](https://coveralls.io/github/rados-io/radex?branch=master)
 
-The smart contract backend for [Radex](https://rados.io/posts/radex-insider-preview).
+The smart contract backend for [Radex](https://saturn.network).
 
 Big thanks to [Ethereum](http://ethereum.org), [Truffle](http://truffleframework.com), [OpenZeppelin](http://openzeppelin.org) and [Colony](https://github.com/sc-forks/solidity-coverage) for the open source tools and learning materials.
 
