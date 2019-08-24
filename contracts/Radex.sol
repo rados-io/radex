@@ -51,6 +51,7 @@ contract Radex is ContractReceiver {
     if (priceDiv == 0) { revert(); }
     if (sellToken == buyToken) { revert(); }
     if (balances[msg.sender][sellToken] < amount) { revert(); }
+    if (amount.mul(priceDiv) % priceMul != 0) { revert(); }
     if (amount.mul(priceMul).div(priceDiv) == 0) { revert(); }
 
     orderId = latestOrderId++;
@@ -76,6 +77,7 @@ contract Radex is ContractReceiver {
   function executeOrder(uint256 orderId, uint256 amount) {
     if (orderId > latestOrderId) { revert(); }
     Order storage order    = orderBook[orderId];
+    if (amount.mul(order.priceMul) % order.priceDiv != 0) { revert(); }
     uint256 buyTokenAmount = amount.mul(order.priceMul).div(order.priceDiv);
     if (amount == 0) { revert(); }
     if (order.amount < amount) { revert(); }
